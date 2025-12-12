@@ -17,8 +17,8 @@
 | **GPT-OSS 120B** | `openai/gpt-oss-120b` | ✅ 成功 | 需 4 GPU (tensor-parallel-size=4) |
 | **Gemma 3 4B Instruct** | `google/gemma-3-4b-it` | ✅ 成功 | 輕量級模型，適合快速測試 |
 | **Llama 3.1 8B** | `meta-llama/Llama-3.1-8B` | ✅ 成功 | Meta 官方模型 |
-| **Qwen 2.5 8B** | `Qwen/Qwen2.5-8B` | ✅ 成功 | 阿里通義千問模型 |
-| **Ministral 3 14V Instruct** | `mistralai/Ministral-3-14V-Instruct-2512` | ❌ 失敗 | 在此環境下無法運行 |
+| **Qwen 3 8B** | `Qwen/Qwen3-8B` | ✅ 成功 | 阿里通義千問模型 |
+| **Ministral 3 14B Instruct** | `mistralai/Ministral-3-14b-Instruct-2512` | ❌ 失敗 | 在此環境下無法運行 |
 
 ### 使用方式
 
@@ -34,8 +34,8 @@
 # 使用 Llama 3.1 8B
 ./run_scaling_bench_200.sh --model meta-llama/Llama-3.1-8B
 
-# 使用 Qwen 2.5 8B
-./run_scaling_bench_200.sh --model Qwen/Qwen2.5-8B
+# 使用 Qwen 3 8B
+./run_scaling_bench_200.sh --model Qwen/Qwen3-8B
 ```
 
 ### 結果檔案組織
@@ -54,8 +54,8 @@ bench_results/scaling/
 ├── Llama-3.1-8B/
 │   ├── Llama-3.1-8B_scale_n1_20251210_140000.json
 │   └── ...
-└── Qwen2.5-8B/
-    ├── Qwen2.5-8B_scale_n1_20251210_150000.json
+└── Qwen3-8B/
+    ├── Qwen3-8B_scale_n1_20251210_150000.json
     └── ...
 ```
 
