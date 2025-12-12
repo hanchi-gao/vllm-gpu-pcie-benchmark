@@ -1,0 +1,36 @@
+# Benchmark 結果
+bench_results/
+*.json
+
+# 輸出圖表
+output_plots/
+*.png
+
+# GPU 監控測試結果
+gpu_monitor_test/test_results/
+gpu_monitor_test/test_gpu_metrics.json
+gpu_monitor_test/*.png
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 編輯器
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# 日誌
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# 臨時文件
+*.tmp
+*.bak

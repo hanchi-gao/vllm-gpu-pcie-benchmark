@@ -1,0 +1,64 @@
+services:
+  # vLLM 服务器容器（手动启动服务）
+  vllm-server:
+    image: rocm/vllm:rocm7.0.0_vllm_0.10.2_20251006
+    container_name: vllm-server
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    ipc: host
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ../benchmark_tests/scripts:/root/benchmark_tests/scripts
+      - ../bench_results:/root/bench_results
+    environment:
+      - HF_HOME=/root/.cache/huggingface
+      - PYTORCH_TUNABLEOP_ENABLED=0
+      - VLLM_USE_TRITON_FLASH_ATTN=0
+      - OMP_NUM_THREADS=32
+    ports:
+      - "8000:8000"
+    networks:
+      - vllm-network
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+  # 基准测试客户端容器（手动运行测试）
+  vllm-bench-client:
+    image: rocm/vllm:rocm7.0.0_vllm_0.10.2_20251006
+    container_name: vllm-bench-client
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    ipc: host
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ../benchmark_tests/scripts:/root/benchmark_tests/scripts
+      - ../bench_results:/root/bench_results
+    environment:
+      - VLLM_SERVER_URL=http://vllm-server:8000
+      - HF_HOME=/root/.cache/huggingface
+      - PYTORCH_TUNABLEOP_ENABLED=0
+      - VLLM_USE_TRITON_FLASH_ATTN=0
+    networks:
+      - vllm-network
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+networks:
+  vllm-network:
+    driver: bridge
