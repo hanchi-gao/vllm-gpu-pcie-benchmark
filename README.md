@@ -18,7 +18,7 @@
 | **Gemma 3 4B Instruct** | `google/gemma-3-4b-it` | ✅ 成功 | 輕量級模型，適合快速測試 |
 | **Llama 3.1 8B** | `meta-llama/Llama-3.1-8B` | ✅ 成功 | Meta 官方模型 |
 | **Qwen 3 8B** | `Qwen/Qwen3-8B` | ✅ 成功 | 阿里通義千問模型 |
-| **Ministral 3 14B Instruct** | `mistralai/Ministral-3-14b-Instruct-2512` | ❌ 失敗 | 在此環境下無法運行 |
+| **Ministral 3 14B Instruct** | `mistralai/Ministral-3-14b-Instruct-2512` | ❌ 失敗 | 需要 vLLM ≥ 0.12.0，ROCm 官方映像尚未提供 |
 
 ### 使用方式
 
@@ -196,15 +196,20 @@ docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_
 測試請求數擴展性：
 
 ```bash
-# 測試 1-1000 請求數範圍
+# 測試 1-1000 請求數範圍（預設使用 gpt-oss-120b）
 docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
 
-# 測試 1-200 請求數範圍（更密集）
+# 測試 1-200 請求數範圍（更密集，預設使用 gpt-oss-120b）
 docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
+
+# 指定不同模型進行測試
+docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
+docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model meta-llama/Llama-3.1-8B"
+docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
 ```
 
 **執行時間**: 約 1-3 小時
-**生成文件**: `bench_results/scaling/scale_n{num_prompts}_{timestamp}.json`
+**生成文件**: `bench_results/scaling/{model_name}/{model_name}_scale_n{num_prompts}_{timestamp}.json`
 
 #### 選項 C: 自訂測試
 
@@ -400,9 +405,13 @@ watch -n 1 rocm-smi
 # Production 測試（在主機端執行）
 docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
 
-# Scaling 測試
+# Scaling 測試（預設模型）
 docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
 docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
+
+# Scaling 測試（指定模型）
+docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
+docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
 
 # 自訂測試（進入容器後執行）
 docker exec -it vllm-bench-client bash
@@ -720,6 +729,35 @@ vllm serve openai/gpt-oss-120b \
   --gpu-memory-utilization 0.7 \
   --max-model-len 4096 \
   --enforce-eager
+```
+
+### 問題 7: 特定模型無法載入
+
+**症狀**: Ministral 3 14B Instruct 報錯 "Tokenizer class TokenizersBackend does not exist"
+
+**錯誤訊息**:
+```
+ValueError: Tokenizer class TokenizersBackend does not exist or is not currently imported.
+RuntimeError: Failed to load the tokenizer.
+```
+
+**原因**:
+- Ministral 3 14B 模型需要 vLLM 0.12.0 或更新版本
+- 當前使用的 ROCm 官方映像 `rocm/vllm:rocm7.0.0_vllm_0.10.2_20251006` 僅支援 vLLM 0.10.2
+- ROCm 官方尚未提供包含 vLLM 0.12.0 的映像檔
+
+**解決方案**:
+- **暫時無法解決**: 等待 ROCm 官方發布包含 vLLM 0.12.0+ 的新映像
+- **替代方案**: 使用其他已測試成功的模型：
+  - `google/gemma-3-4b-it` - 輕量級，適合快速測試
+  - `meta-llama/Llama-3.1-8B` - Meta 官方模型
+  - `Qwen/Qwen3-8B` - 阿里通義千問模型
+  - `openai/gpt-oss-120b` - 大型模型（需 4 GPU）
+
+**檢查 vLLM 版本**:
+```bash
+docker exec vllm-server vllm --version
+# 輸出: vllm 0.10.2
 ```
 
 ---
