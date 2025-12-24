@@ -337,7 +337,6 @@ docker logs vllm-server | tail -100
 
 - **專案 GitHub**: [https://github.com/hanchi-gao/vllm_t](https://github.com/hanchi-gao/vllm_t)
 - **完整技術文檔**: [README.md](README.md)
-- **原始測試手冊**: [SCALING_200_GUIDE.md](SCALING_200_GUIDE.md)
 
 ---
 
