@@ -185,7 +185,7 @@ vllm serve facebook/opt-125m \
 測試多種 context length 和並發數組合：
 
 ```bash
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
 ```
 
 **執行時間**: 約 30-60 分鐘（取決於模型大小和硬體）
@@ -197,15 +197,15 @@ docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_
 
 ```bash
 # 測試 1-1000 請求數範圍（預設使用 gpt-oss-120b）
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
 
 # 測試 1-200 請求數範圍（更密集，預設使用 gpt-oss-120b）
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
 
 # 指定不同模型進行測試
-docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
-docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model meta-llama/Llama-3.1-8B"
-docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
+docker exec -it vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
+docker exec -it vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model meta-llama/Llama-3.1-8B"
+docker exec -it vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
 ```
 
 **執行時間**: 約 1-3 小時
@@ -403,15 +403,15 @@ watch -n 1 rocm-smi
 
 ```bash
 # Production 測試（在主機端執行）
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
 
 # Scaling 測試（預設模型）
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_scaling_bench_200.sh
 
 # Scaling 測試（指定模型）
-docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
-docker exec vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
+docker exec -it vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model google/gemma-3-4b-it"
+docker exec -it vllm-bench-client bash -c "cd /root && /root/benchmark_tests/scripts/run_scaling_bench_200.sh --model Qwen/Qwen3-8B"
 
 # 自訂測試（進入容器後執行）
 docker exec -it vllm-bench-client bash
@@ -558,7 +558,7 @@ cat bench_results/production/input_10K_n5_*.json | \
 
 ```bash
 # 保存測試日誌範例
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh \
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh \
   2>&1 | tee production_test_$(date +%Y%m%d_%H%M%S).log
 ```
 
@@ -879,7 +879,7 @@ vllm serve openai/gpt-oss-120b \
 curl http://localhost:8000/health
 
 # 運行 Production 測試
-docker exec vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
+docker exec -it vllm-bench-client bash /root/benchmark_tests/scripts/run_production_bench.sh
 
 # 等待測試完成（約 30-60 分鐘）
 
