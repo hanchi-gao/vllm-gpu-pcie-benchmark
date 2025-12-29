@@ -2,6 +2,8 @@
 
 在 AMD GPU (ROCm) 上使用 Docker Compose 部署 vLLM 服務器和客戶端進行全面性能測試與分析。
 
+> **專案來源**: 本專案從 [vllm_t](https://github.com/hanchi-gao/vllm_t) 複製而來，專注於 GPU PCIe 頻寬對 vLLM 性能的影響測試。
+
 **硬體環境**: AMD Radeon AI PRO R9700 (gfx1201)
 **Docker 映像**: `rocm/vllm:rocm7.0.0_vllm_0.10.2_20251006`
 **vLLM 版本**: 0.10.2
