@@ -147,7 +147,7 @@ docker exec -it vllm-bench-client bash
 docker exec -it vllm-server bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
+  --gpu-memory-utilization 0.95 \
   --max-model-len 1280 \
   --enforce-eager
 
@@ -171,7 +171,7 @@ cd /root
 ```bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
+  --gpu-memory-utilization 0.95 \
   --max-model-len 1280 \
   --enforce-eager
 ```
@@ -181,7 +181,7 @@ vllm serve meta-llama/Llama-3.1-8B \
 ```bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.9 \
+  --gpu-memory-utilization 0.95 \
   --max-model-len 1280 \
   --enforce-eager
 ```
@@ -191,7 +191,7 @@ vllm serve meta-llama/Llama-3.1-8B \
 ```bash
 vllm serve Qwen/Qwen3-14B \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.9 \
+  --gpu-memory-utilization 0.95 \
   --max-model-len 1280 \
   --enforce-eager
 ```
@@ -201,10 +201,12 @@ vllm serve Qwen/Qwen3-14B \
 ```bash
 vllm serve google/gemma-3-27b-it \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.9 \
+  --gpu-memory-utilization 0.95 \
   --max-model-len 1280 \
   --enforce-eager
 ```
+
+**注意**: 所有測試統一使用 `--gpu-memory-utilization 0.95` 以確保測試環境一致性。
 
 ---
 
@@ -338,6 +340,16 @@ vllm serve Qwen/Qwen3-14B --tensor-parallel-size 2 ...
 
 # ✗ 錯誤 (VRAM 不足)
 vllm serve Qwen/Qwen3-14B --tensor-parallel-size 1 ...
+```
+
+**特別注意**: 所有測試統一使用 `--gpu-memory-utilization 0.95` 以確保環境一致性。`google/gemma-3-27b-it` 特別需要 0.95 才能成功載入：
+
+```bash
+# ✓ 正確 - 所有模型統一使用 0.95
+vllm serve google/gemma-3-27b-it --tensor-parallel-size 2 --gpu-memory-utilization 0.95 ...
+
+# ✗ 錯誤 - 0.9 或更低會導致 gemma-3-27b-it 無法載入
+vllm serve google/gemma-3-27b-it --tensor-parallel-size 2 --gpu-memory-utilization 0.9 ...
 ```
 
 ### 4. 測試中斷

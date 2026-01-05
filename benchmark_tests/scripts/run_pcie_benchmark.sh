@@ -229,6 +229,7 @@ for NUM_PROMPTS in $(seq $NUM_PROMPTS_START $NUM_PROMPTS_END); do
         --random-input-len "$INPUT_LEN" \
         --random-output-len "$OUTPUT_LEN" \
         --num-prompts "$NUM_PROMPTS" \
+        --ignore-eos \
         --save-result \
         --result-filename "temp_result_${NUM_PROMPTS}.json" > /dev/null 2>&1
 
