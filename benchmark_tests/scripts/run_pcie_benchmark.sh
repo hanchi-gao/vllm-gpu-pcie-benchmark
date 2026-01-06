@@ -27,7 +27,7 @@ RESULTS_DIR="/root/bench_results/pcie"
 declare -A MODEL_MAP
 MODEL_MAP["7B"]="meta-llama/Llama-3.1-8B"
 MODEL_MAP["14B"]="Qwen/Qwen3-14B"
-MODEL_MAP["30B"]="google/gemma-3-27b-it"
+MODEL_MAP["20B"]="openai/gpt-oss-20b"
 
 # 配置描述映射
 declare -A CONFIG_DESC
@@ -46,10 +46,10 @@ Required Parameters:
                           B: Dual GPU x8 (2×16 GB/s)
                           C: Dual GPU x16 (2×32 GB/s)
 
-  --model <7B|14B|30B>    Model size
+  --model <7B|14B|20B>    Model size
                           7B:  meta-llama/Llama-3.1-8B
                           14B: Qwen/Qwen3-14B
-                          30B: google/gemma-3-27b-it
+                          20B: openai/gpt-oss-20b
 
 Optional Parameters:
   --tp <1|2>              Tensor parallel size (default: 1)
@@ -117,8 +117,8 @@ if [[ ! "$CONFIG" =~ ^[ABC]$ ]]; then
     exit 1
 fi
 
-if [[ ! "$MODEL_SIZE" =~ ^(7B|14B|30B)$ ]]; then
-    echo -e "${RED}Error: --model must be 7B, 14B, or 30B${NC}"
+if [[ ! "$MODEL_SIZE" =~ ^(7B|14B|20B)$ ]]; then
+    echo -e "${RED}Error: --model must be 7B, 14B, or 20B${NC}"
     exit 1
 fi
 

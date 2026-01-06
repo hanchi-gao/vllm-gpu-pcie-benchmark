@@ -37,7 +37,7 @@
 |---------|-------------|------|
 | **7B** | `meta-llama/Llama-3.1-8B` | 輕量級模型，適合基準測試 |
 | **14B** | `Qwen/Qwen3-14B` | 中型模型，測試 VRAM 壓力 |
-| **30B** | `google/gemma-3-27b-it` | 大型模型，需 TP=2 |
+| **20B** | `openai/gpt-oss-20b` | 大型模型，需 TP=2 |
 
 ### 測試矩陣
 
@@ -48,7 +48,7 @@
 | **1C-1k** | C | 7B | 1 | 1024 | 128 | 單卡 baseline |
 | **2C-1k** | C | 7B | 2 | 1024 | 128 | x16 下 TP 通訊 |
 | **3C-1k** | C | 14B | 2 | 1024 | 128 | Qwen 模型測試 |
-| **4C-1k** | C | 30B | 2 | 1024 | 128 | 大模型測試 |
+| **4C-1k** | C | 20B | 2 | 1024 | 128 | 大模型測試 |
 
 #### Machine A/B (6 個配置 × 200 prompts = 1,200 個結果)
 
@@ -59,7 +59,7 @@
 | **2B-1k** | B | 7B | 2 | 1024 | 128 | x8 下 TP 通訊 |
 | **3A-1k** | A | 14B | 1 | 1024 | 128 | 單卡 Qwen |
 | **4B-1k** | B | 14B | 2 | 1024 | 128 | TP=2 Qwen |
-| **5B-1k** | B | 30B | 2 | 1024 | 128 | TP=2 大模型 |
+| **5B-1k** | B | 20B | 2 | 1024 | 128 | TP=2 大模型 |
 
 **總結果文件數**: 2,000 個 JSON 文件 (10 個配置 × 200 prompts)
 
@@ -104,7 +104,7 @@ cd /root
 1. **Group 1**: 7B + TP=1 (1 個測試配置 × 200 prompts)
 2. **Group 2**: 7B + TP=2 (1 個測試配置 × 200 prompts)
 3. **Group 3**: 14B (Qwen) + TP=2 (1 個測試配置 × 200 prompts)
-4. **Group 4**: 30B + TP=2 (1 個測試配置 × 200 prompts)
+4. **Group 4**: 20B + TP=2 (1 個測試配置 × 200 prompts)
 
 ---
 
@@ -131,7 +131,7 @@ cd /root
 2. **Group 2**: 7B + TP=2 (Config B, 1 個配置)
 3. **Group 3**: 14B (Qwen) + TP=1 (Config A, 1 個配置)
 4. **Group 4**: 14B (Qwen) + TP=2 (Config B, 1 個配置)
-5. **Group 5**: 30B + TP=2 (Config B, 1 個配置)
+5. **Group 5**: 20B + TP=2 (Config B, 1 個配置)
 
 ---
 
@@ -147,7 +147,7 @@ docker exec -it vllm-bench-client bash
 docker exec -it vllm-server bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
+  --gpu-memory-utilization 0.9 \
   --max-model-len 1280 \
   --enforce-eager
 
@@ -158,7 +158,7 @@ cd /root
 
 **參數說明**：
 - `--config`: 硬體配置 (A, B, 或 C)
-- `--model`: 模型大小 (7B, 14B, 或 30B)
+- `--model`: 模型大小 (7B, 14B, 或 20B)
 - `--tp`: Tensor Parallel 大小 (1 或 2)
 - `--input-len`: 輸入長度 (固定為 1024)
 
@@ -171,7 +171,7 @@ cd /root
 ```bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
+  --gpu-memory-utilization 0.9 \
   --max-model-len 1280 \
   --enforce-eager
 ```
@@ -181,7 +181,7 @@ vllm serve meta-llama/Llama-3.1-8B \
 ```bash
 vllm serve meta-llama/Llama-3.1-8B \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.95 \
+  --gpu-memory-utilization 0.9 \
   --max-model-len 1280 \
   --enforce-eager
 ```
@@ -191,22 +191,22 @@ vllm serve meta-llama/Llama-3.1-8B \
 ```bash
 vllm serve Qwen/Qwen3-14B \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.95 \
+  --gpu-memory-utilization 0.9 \
   --max-model-len 1280 \
   --enforce-eager
 ```
 
-### Group 4: 30B Model + TP=2
+### Group 4: 20B Model + TP=2
 
 ```bash
-vllm serve google/gemma-3-27b-it \
+vllm serve openai/gpt-oss-20b \
   --tensor-parallel-size 2 \
-  --gpu-memory-utilization 0.95 \
+  --gpu-memory-utilization 0.9 \
   --max-model-len 1280 \
   --enforce-eager
 ```
 
-**注意**: 所有測試統一使用 `--gpu-memory-utilization 0.95` 以確保測試環境一致性。
+**注意**: 所有測試統一使用 `--gpu-memory-utilization 0.9` 以確保測試環境一致性。
 
 ---
 
@@ -332,7 +332,7 @@ curl http://vllm-server:8000/health
 
 ### 3. VRAM 不足
 
-對於大模型（14B, 30B），必須使用 `--tensor-parallel-size 2`：
+對於大模型（14B, 20B），必須使用 `--tensor-parallel-size 2`：
 
 ```bash
 # ✓ 正確
@@ -342,14 +342,14 @@ vllm serve Qwen/Qwen3-14B --tensor-parallel-size 2 ...
 vllm serve Qwen/Qwen3-14B --tensor-parallel-size 1 ...
 ```
 
-**特別注意**: 所有測試統一使用 `--gpu-memory-utilization 0.95` 以確保環境一致性。`google/gemma-3-27b-it` 特別需要 0.95 才能成功載入：
+**特別注意**: 所有測試統一使用 `--gpu-memory-utilization 0.9` 以確保環境一致性。
 
 ```bash
-# ✓ 正確 - 所有模型統一使用 0.95
-vllm serve google/gemma-3-27b-it --tensor-parallel-size 2 --gpu-memory-utilization 0.95 ...
+# ✓ 正確 - 所有模型統一使用 0.9
+vllm serve openai/gpt-oss-20b --tensor-parallel-size 2 --gpu-memory-utilization 0.9 ...
 
-# ✗ 錯誤 - 0.9 或更低會導致 gemma-3-27b-it 無法載入
-vllm serve google/gemma-3-27b-it --tensor-parallel-size 2 --gpu-memory-utilization 0.9 ...
+# ✗ 錯誤 - 其他數值可能導致測試環境不一致
+vllm serve openai/gpt-oss-20b --tensor-parallel-size 2 --gpu-memory-utilization 0.95 ...
 ```
 
 ### 4. 測試中斷
@@ -386,7 +386,7 @@ vllm serve google/gemma-3-27b-it --tensor-parallel-size 2 --gpu-memory-utilizati
 - 📉 簡化測試：只測試 1024 輸入長度
 - 🔧 更新 max-model-len 從 4096 → 1280
 - 🤖 將 14B 模型從 Llama-2-13b-hf 改為 Qwen/Qwen3-14B
-- 🤖 將 30B 模型從 Llama-2-30b-hf 改為 google/gemma-3-27b-it
+- 🤖 將 20B 模型從 Llama-2-30b-hf 改為 openai/gpt-oss-20b
 - 📊 結果文件使用 vLLM 原生 JSON 格式
 - 🐛 修復腳本兼容性問題（`set -e` 與 `((VAR++))`）
 - 📝 減少測試總數：從 24 個配置 → 10 個配置

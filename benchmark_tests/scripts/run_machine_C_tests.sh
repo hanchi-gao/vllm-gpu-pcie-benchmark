@@ -41,7 +41,7 @@ echo -e "${YELLOW}Required vLLM Server Configuration:${NC}"
 echo ""
 echo "  vllm serve meta-llama/Llama-3.1-8B \\"
 echo "    --tensor-parallel-size 1 \\"
-echo "    --gpu-memory-utilization 0.95 \\"
+echo "    --gpu-memory-utilization 0.9 \\"
 echo "    --max-model-len 1280 \\"
 echo "    --enforce-eager"
 echo ""
@@ -74,7 +74,7 @@ echo -e "${YELLOW}Required vLLM Server Configuration:${NC}"
 echo ""
 echo "  vllm serve meta-llama/Llama-3.1-8B \\"
 echo "    --tensor-parallel-size 2 \\"
-echo "    --gpu-memory-utilization 0.95 \\"
+echo "    --gpu-memory-utilization 0.9 \\"
 echo "    --max-model-len 1280 \\"
 echo "    --enforce-eager"
 echo ""
@@ -107,7 +107,7 @@ echo -e "${YELLOW}Required vLLM Server Configuration:${NC}"
 echo ""
 echo "  vllm serve Qwen/Qwen3-14B \\"
 echo "    --tensor-parallel-size 2 \\"
-echo "    --gpu-memory-utilization 0.95 \\"
+echo "    --gpu-memory-utilization 0.9 \\"
 echo "    --max-model-len 1280 \\"
 echo "    --enforce-eager"
 echo ""
@@ -129,29 +129,27 @@ echo -e "${GREEN}Group 3 completed! (3/4 tests)${NC}"
 echo ""
 
 # ============================================================
-# Group 4: 30B + TP=2 (Config C: 1 test)
+# Group 4: 20B + TP=2 (Config C: 1 test)
 # ============================================================
 echo -e "${CYAN}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${CYAN}║  Group 4: 30B Model + TP=2 (Config C)                     ║${NC}"
+echo -e "${CYAN}║  Group 4: 20B Model + TP=2 (Config C)                     ║${NC}"
 echo -e "${CYAN}║  Tests: 4C-1k                                       ║${NC}"
 echo -e "${CYAN}╚════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${YELLOW}Required vLLM Server Configuration:${NC}"
 echo ""
-echo "  vllm serve google/gemma-3-27b-it \\"
+echo "  vllm serve openai/gpt-oss-20b \\"
 echo "    --tensor-parallel-size 2 \\"
-echo "    --gpu-memory-utilization 0.95 \\"
+echo "    --gpu-memory-utilization 0.9 \\"
 echo "    --max-model-len 1280 \\"
 echo "    --enforce-eager"
 echo ""
-echo -e "${YELLOW}⚠️  Note: gemma-3-27b-it requires 0.95 GPU memory utilization to load${NC}"
-echo ""
-read -p "Press Enter when vLLM server is restarted with 30B model..."
+read -p "Press Enter when vLLM server is restarted with 20B model..."
 echo ""
 
 for INPUT_LEN in 1024; do
     INPUT_LABEL="${INPUT_LEN:0:1}k"
-    if "$BENCHMARK_SCRIPT" --config C --model 30B --tp 2 --input-len "$INPUT_LEN"; then
+    if "$BENCHMARK_SCRIPT" --config C --model 20B --tp 2 --input-len "$INPUT_LEN"; then
         PASSED_TESTS=$((PASSED_TESTS + 1))
     else
         FAILED_TESTS=$((FAILED_TESTS + 1))
